@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest SQLAlchemy psutil folium
+      - name: Lint with flake8
+        run: flake8 mcs_cvor/ tests/ --max-line-length=120 --exclude=__pycache__
+      - name: Run tests
+        run: pytest tests/ -v
